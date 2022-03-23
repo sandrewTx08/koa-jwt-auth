@@ -51,7 +51,7 @@ export class UserController {
     ctx.body = user;
   }
 
-  static async findById(ctx: Context) {
+  static async findOne(ctx: Context) {
     let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
@@ -86,7 +86,7 @@ export class UserController {
     };
   }
 
-  static async findByIAndUpdate(ctx: Context) {
+  static async findOneAndUpdate(ctx: Context) {
     let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
@@ -129,7 +129,7 @@ export class UserController {
     };
   }
 
-  static async findByIdAndDelete(ctx: Context) {
+  static async findOneAndDelete(ctx: Context) {
     let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
