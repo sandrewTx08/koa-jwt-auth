@@ -2,7 +2,7 @@ import { config } from "./config";
 import { DataSource } from "typeorm";
 import { User } from "./entity/User";
 
-export const datasorce = new DataSource({
+export const datasource = new DataSource({
   type: "postgres",
   host: config.TYPEORM_HOST,
   port: Number(config.TYPEORM_PORT),

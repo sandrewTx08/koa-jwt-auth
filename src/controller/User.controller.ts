@@ -8,7 +8,7 @@ import {
   verifyRefreshToken,
 } from "../token";
 import encrypt from "../encrypt";
-import { datasorce } from "../datasorce";
+import { datasource } from "../datasource";
 
 export class UserController {
   static async authenticatePassword(ctx: Context) {
@@ -18,7 +18,7 @@ export class UserController {
       "Username or email is empty."
     );
 
-    const user = await datasorce.getRepository(User).findOneBy({
+    const user = await datasource.getRepository(User).findOneBy({
       username: ctx.request.body.username,
       email: ctx.request.body.email,
     });
@@ -34,7 +34,7 @@ export class UserController {
     if (refresh_token.expired || refresh_token.invalid) {
       refresh_id = v4();
       user.refresh_token = signRefreshToken(refresh_id, user);
-      await datasorce.getRepository(User).save(user);
+      await datasource.getRepository(User).save(user);
     } else {
       refresh_id = refresh_token.refresh_id;
     }
@@ -46,13 +46,13 @@ export class UserController {
   }
 
   static async findAll(ctx: Context) {
-    let user: User[] = await datasorce.getRepository(User).find();
+    let user: User[] = await datasource.getRepository(User).find();
     ctx.assert(user.length > 0, 404, "No user found.");
     ctx.body = user;
   }
 
   static async findById(ctx: Context) {
-    let user = await datasorce
+    let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
     ctx.assert(user, 404, "User not found.");
@@ -61,7 +61,7 @@ export class UserController {
 
   static async createOne(ctx: Context) {
     ctx.assert(
-      !(await datasorce
+      !(await datasource
         .getRepository(User)
         .findOne(ctx.request.body.username || ctx.request.body.email)),
       409,
@@ -77,7 +77,7 @@ export class UserController {
     user.refresh_token = signRefreshToken(refresh_id, user);
     user.password = await encrypt(ctx.request.body.password);
 
-    await datasorce.getRepository(User).save(user);
+    await datasource.getRepository(User).save(user);
     ctx.status = 201;
     ctx.body = {
       message: `${user.username} created.`,
@@ -87,7 +87,7 @@ export class UserController {
   }
 
   static async findByIAndUpdate(ctx: Context) {
-    let user = await datasorce
+    let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
     ctx.assert(user, 404, "User not found.");
@@ -120,7 +120,7 @@ export class UserController {
       ? await encrypt(ctx.request.body.password)
       : user.password;
 
-    await datasorce.getRepository(User).save(user);
+    await datasource.getRepository(User).save(user);
     ctx.status = 201;
     ctx.body = {
       message: `${user.username} updated.`,
@@ -130,11 +130,11 @@ export class UserController {
   }
 
   static async findByIdAndDelete(ctx: Context) {
-    let user = await datasorce
+    let user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
     ctx.assert(user, 404, "User not found.");
-    await datasorce.getRepository(User).delete(user.id);
+    await datasource.getRepository(User).delete(user.id);
 
     ctx.body = {
       message: `${user.username} deleted.`,

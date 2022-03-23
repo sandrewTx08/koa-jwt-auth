@@ -3,12 +3,12 @@ import Router from "koa-router";
 import { UserController } from "./controller/User.controller";
 import bodyParser from "koa-bodyparser";
 import jwt from "./middleware/token";
-import { datasorce } from "./datasorce";
+import { datasource } from "./datasource";
 const app = new Koa();
 const user = new Router();
 const general = new Router();
 
-datasorce.initialize().then(() => {
+datasource.initialize().then(() => {
   user
     .prefix("/v1")
     .post(["/signin", "/login"], UserController.authenticatePassword)

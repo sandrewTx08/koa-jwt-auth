@@ -1,5 +1,5 @@
 import { Context, Next } from "koa";
-import { datasorce } from "../datasorce";
+import { datasource } from "../datasource";
 import { User } from "../entity/User";
 import {
   signAccessToken,
@@ -14,7 +14,7 @@ export default async function jwt(ctx: Context, next: Next) {
 
   ctx.assert(!access_token.invalid, 400, "Invalid token.");
 
-  const user = await datasorce
+  const user = await datasource
     .getRepository(User)
     .findOneBy({ id: access_token.id });
   ctx.assert(user, 410, "User may not exist anymore.");
