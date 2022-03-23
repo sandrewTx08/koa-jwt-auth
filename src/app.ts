@@ -14,9 +14,9 @@ datasource.initialize().then(() => {
     .post(["/signin", "/login"], UserController.authenticatePassword)
     .post(["/signup", "/register", "/user"], UserController.createOne)
     .get("/user", UserController.findAll)
-    .get("/user/:id", UserController.findById)
-    .patch("/user/:id", UserController.findByIAndUpdate)
-    .delete("/user/:id", UserController.findByIdAndDelete);
+    .get("/user/:id", UserController.findOne)
+    .patch("/user/:id", UserController.findOneAndUpdate)
+    .delete("/user/:id", UserController.findOneAndDelete);
 
   general.get("/", (ctx: Context) => {
     ctx.body = "Hello World!";
