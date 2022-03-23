@@ -1,0 +1,143 @@
+import { compare } from "bcrypt";
+import { v4 } from "uuid";
+import { Context } from "koa";
+import { User } from "../entity/User";
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "../token";
+import encrypt from "../encrypt";
+import { datasorce } from "../datasorce";
+
+export class UserController {
+  static async authenticatePassword(ctx: Context) {
+    ctx.assert(
+      ctx.request.body.username || ctx.request.body.email,
+      400,
+      "Username or email is empty."
+    );
+
+    const user = await datasorce.getRepository(User).findOneBy({
+      username: ctx.request.body.username,
+      email: ctx.request.body.email,
+    });
+
+    ctx.assert(
+      await compare(ctx.request.body.password, user.password),
+      400,
+      "Invalid password"
+    );
+
+    let refresh_token = verifyRefreshToken(user);
+    let refresh_id;
+    if (refresh_token.expired || refresh_token.invalid) {
+      refresh_id = v4();
+      user.refresh_token = signRefreshToken(refresh_id, user);
+      await datasorce.getRepository(User).save(user);
+    } else {
+      refresh_id = refresh_token.refresh_id;
+    }
+
+    ctx.body = {
+      message: `Welcome ${user.username}.`,
+      access_token: signAccessToken(refresh_id, user),
+    };
+  }
+
+  static async findAll(ctx: Context) {
+    let user: User[] = await datasorce.getRepository(User).find();
+    ctx.assert(user.length > 0, 404, "No user found.");
+    ctx.body = user;
+  }
+
+  static async findById(ctx: Context) {
+    let user = await datasorce
+      .getRepository(User)
+      .findOneBy({ id: ctx.params.id });
+    ctx.assert(user, 404, "User not found.");
+    ctx.body = user;
+  }
+
+  static async createOne(ctx: Context) {
+    ctx.assert(
+      !(await datasorce
+        .getRepository(User)
+        .findOne(ctx.request.body.username || ctx.request.body.email)),
+      409,
+      "User already exists."
+    );
+
+    const user = new User();
+    user.enable = true;
+    user.email = ctx.request.body.email;
+    user.username = ctx.request.body.username;
+    let refresh_id = v4();
+    user.id = v4();
+    user.refresh_token = signRefreshToken(refresh_id, user);
+    user.password = await encrypt(ctx.request.body.password);
+
+    await datasorce.getRepository(User).save(user);
+    ctx.status = 201;
+    ctx.body = {
+      message: `${user.username} created.`,
+      access_token: signAccessToken(refresh_id, user),
+      ...user,
+    };
+  }
+
+  static async findByIAndUpdate(ctx: Context) {
+    let user = await datasorce
+      .getRepository(User)
+      .findOneBy({ id: ctx.params.id });
+    ctx.assert(user, 404, "User not found.");
+
+    ctx.assert(
+      ctx.request.body.username !== user.username &&
+        ctx.request.body.email !== user.email &&
+        ctx.request.body.enable !== user.enable,
+      400,
+      "Cannot update equal results."
+    );
+
+    if (ctx.request.body.password) {
+      ctx.assert(
+        !(await compare(ctx.request.body.password, user.password)),
+        400,
+        "Cannot change equal passwords."
+      );
+    }
+
+    user.enable = true;
+    user.email = ctx.request.body.email ? ctx.request.body.email : user.email;
+    user.username = ctx.request.body.username
+      ? ctx.request.body.username
+      : user.username;
+    let refresh_id = v4();
+    user.id = user.id;
+    user.refresh_token = signRefreshToken(refresh_id, user);
+    user.password = ctx.request.body.password
+      ? await encrypt(ctx.request.body.password)
+      : user.password;
+
+    await datasorce.getRepository(User).save(user);
+    ctx.status = 201;
+    ctx.body = {
+      message: `${user.username} updated.`,
+      access_token: signAccessToken(refresh_id, user),
+      ...user,
+    };
+  }
+
+  static async findByIdAndDelete(ctx: Context) {
+    let user = await datasorce
+      .getRepository(User)
+      .findOneBy({ id: ctx.params.id });
+    ctx.assert(user, 404, "User not found.");
+    await datasorce.getRepository(User).delete(user.id);
+
+    ctx.body = {
+      message: `${user.username} deleted.`,
+    };
+  }
+}
