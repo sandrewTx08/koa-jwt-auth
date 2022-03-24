@@ -61,9 +61,10 @@ export class UserController {
 
   static async createOne(ctx: Context) {
     ctx.assert(
-      !(await datasource
-        .getRepository(User)
-        .findOne(ctx.request.body.username || ctx.request.body.email)),
+      !(await datasource.getRepository(User).findOneBy({
+        username: ctx.request.body.username,
+        email: ctx.request.body.email,
+      })),
       409,
       "User already exists."
     );
