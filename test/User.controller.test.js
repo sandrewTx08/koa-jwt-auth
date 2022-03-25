@@ -33,6 +33,19 @@ describe("user controller", () => {
         });
     });
 
+    it("createOne duplicate", () => {
+      return supertest(app)
+        .post("/v1/user")
+        .send({
+          username: "testUsername",
+          password: "testPassword",
+          email: "testEmail@email.com",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(409);
+    });
+
     it("findOne after create", () => {
       return supertest(app).get(`/v1/user/${createOne.id}`).expect(200);
     });
@@ -55,6 +68,39 @@ describe("user controller", () => {
         .then((res) => {
           updatedOne = res.body;
         });
+    });
+
+    it("findOneAndUpdate equal username", () => {
+      return supertest(app)
+        .patch(`/v1/user/${updatedOne.id}`)
+        .send({
+          username: "testUsernameUpdated",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(400);
+    });
+
+    it("findOneAndUpdate equal email", () => {
+      return supertest(app)
+        .patch(`/v1/user/${updatedOne.id}`)
+        .send({
+          email: "testEmailUpdated@email.com",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(400);
+    });
+
+    it("findOneAndUpdate equal password", () => {
+      return supertest(app)
+        .patch(`/v1/user/${updatedOne.id}`)
+        .send({
+          password: "testPasswordUpdated",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(400);
     });
 
     it("findOne after update", () => {
