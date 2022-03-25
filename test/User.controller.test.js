@@ -33,6 +33,10 @@ describe("user controller", () => {
         });
     });
 
+    it("findOne after create", () => {
+      return supertest(app).get(`/v1/user/${createOne.id}`).expect(200);
+    });
+
     it("findAll", () => {
       return supertest(app).get("/v1/user").expect(200);
     });
@@ -53,8 +57,20 @@ describe("user controller", () => {
         });
     });
 
+    it("findOne after update", () => {
+      return supertest(app).get(`/v1/user/${updatedOne.id}`).expect(200);
+    });
+
     it("findOneAndDelete", () => {
       return supertest(app).delete(`/v1/user/${updatedOne.id}`).expect(200);
+    });
+
+    it("findOne after delete", () => {
+      return supertest(app).get(`/v1/user/${createOne.id}`).expect(404);
+    });
+
+    it("findOne after delete", () => {
+      return supertest(app).get(`/v1/user/${updatedOne.id}`).expect(404);
     });
   });
 
