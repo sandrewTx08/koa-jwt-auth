@@ -38,11 +38,7 @@ export class UserController {
     } else {
       refresh_id = refresh_token.refresh_id;
     }
-
-    ctx.body = {
-      message: `Welcome ${user.username}.`,
-      access_token: signAccessToken(refresh_id, user),
-    };
+    ctx.body = signAccessToken(refresh_id, user);
   }
 
   static async findAll(ctx: Context) {
