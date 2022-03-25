@@ -29,7 +29,7 @@ export class UserController {
       "Invalid password"
     );
 
-    let refresh_token = verifyRefreshToken(user);
+    const refresh_token = verifyRefreshToken(user);
     let refresh_id;
     if (refresh_token.expired || refresh_token.invalid) {
       refresh_id = v4();
@@ -73,7 +73,7 @@ export class UserController {
     user.enable = true;
     user.email = ctx.request.body.email;
     user.username = ctx.request.body.username;
-    let refresh_id = v4();
+    const refresh_id = v4();
     user.id = v4();
     user.refresh_token = signRefreshToken(refresh_id, user);
     user.password = await encrypt(ctx.request.body.password);
@@ -93,13 +93,23 @@ export class UserController {
       .findOneBy({ id: ctx.params.id });
     ctx.assert(user, 404, "User not found.");
 
-    ctx.assert(
-      ctx.request.body.username !== user.username &&
-        ctx.request.body.email !== user.email &&
-        ctx.request.body.enable !== user.enable,
-      400,
-      "Cannot update equal results."
-    );
+    if (ctx.request.body.username) {
+      ctx.assert(
+        ctx.request.body.username !== user.username,
+        400,
+        "Cannot change equal usernames."
+      );
+      user.username = ctx.request.body.username;
+    }
+
+    if (ctx.request.body.email) {
+      ctx.assert(
+        ctx.request.body.email !== user.email,
+        400,
+        "Cannot change equal emails."
+      );
+      user.email = ctx.request.body.email;
+    }
 
     if (ctx.request.body.password) {
       ctx.assert(
@@ -107,19 +117,11 @@ export class UserController {
         400,
         "Cannot change equal passwords."
       );
+      user.password = await encrypt(ctx.request.body.password);
     }
 
-    user.enable = true;
-    user.email = ctx.request.body.email ? ctx.request.body.email : user.email;
-    user.username = ctx.request.body.username
-      ? ctx.request.body.username
-      : user.username;
-    let refresh_id = v4();
-    user.id = user.id;
+    const refresh_id = v4();
     user.refresh_token = signRefreshToken(refresh_id, user);
-    user.password = ctx.request.body.password
-      ? await encrypt(ctx.request.body.password)
-      : user.password;
 
     await datasource.getRepository(User).save(user);
     ctx.status = 201;
@@ -131,7 +133,7 @@ export class UserController {
   }
 
   static async findOneAndDelete(ctx: Context) {
-    let user = await datasource
+    const user = await datasource
       .getRepository(User)
       .findOneBy({ id: ctx.params.id });
     ctx.assert(user, 404, "User not found.");
