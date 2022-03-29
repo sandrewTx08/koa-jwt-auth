@@ -6,7 +6,7 @@ const bodyParser = require("koa-bodyparser");
 
 describe("user controller", () => {
   before(() => {
-    return datasource.initialize();
+    if (!datasource.isInitialized) return datasource.initialize();
   });
 
   before(() => {
