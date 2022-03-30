@@ -1,6 +1,4 @@
 const { UserRoute } = require("../build/routes/User.route");
-const { HelloWorldRoute } = require("../build/routes/helloWorld");
-const { jwtKoa } = require("../build/middleware/jwtKoa");
 const Koa = require("koa");
 const supertest = require("supertest");
 const { datasource } = require("../build/datasource");
@@ -20,19 +18,8 @@ describe("token", () => {
   });
 
   before(() => {
-    process.env.JWT_REFRESH_TOKEN_EXP = "1 week";
-    process.env.JWT_REFRESH_TOKEN = "2000";
-    process.env.JWT_ACCESS_TOKEN_EXP = "8 hour";
-    process.env.JWT_ACCESS_TOKEN = "1000";
-  });
-
-  before(() => {
     app = new Koa();
-    app
-      .use(bodyParser())
-      .use(UserRoute.middleware())
-      .use(jwtKoa())
-      .use(HelloWorldRoute.middleware());
+    app.use(bodyParser()).use(UserRoute.middleware());
     app = app.listen(process.env.PORT || 8081);
   });
 
@@ -40,9 +27,9 @@ describe("token", () => {
     return supertest(app)
       .post("/v1/user")
       .send({
-        username: "testUsername",
-        password: "testPassword",
-        email: "testEmail@email.com",
+        username: "testTokenUsername",
+        password: "testTokenPassword",
+        email: "testTokenEmail@email.com",
       })
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
@@ -93,21 +80,6 @@ describe("token", () => {
           });
         });
       });
-    });
-  });
-
-  describe("token authentication", () => {
-    it("login and return token", () => {
-      return supertest(app)
-        .post("/v1/login")
-        .send({
-          username: "testUsername",
-          password: "testPassword",
-        })
-        .expect(200)
-        .then((res) => {
-          loginToken = res.text;
-        });
     });
   });
 
