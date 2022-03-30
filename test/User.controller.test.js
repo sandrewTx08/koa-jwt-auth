@@ -6,7 +6,7 @@ const bodyParser = require("koa-bodyparser");
 
 describe("user controller", () => {
   before(() => {
-    return datasource.initialize();
+    if (!datasource.isInitialized) return datasource.initialize();
   });
 
   before(() => {
@@ -16,14 +16,30 @@ describe("user controller", () => {
     app = app.listen(process.env.PORT || 8081);
   });
 
+  before(() => {
+    createOneCredentials = {
+      username: "testUsername",
+      password: "testPassword",
+      email: "testEmail@email.com",
+    };
+  });
+
+  before(() => {
+    updateOneCredentials = {
+      username: "testUsernameUpdated",
+      password: "testPasswordUpdated",
+      email: "testEmailUpdated@email.com",
+    };
+  });
+
   describe("User controller", () => {
     it("createOne", () => {
       return supertest(app)
         .post("/v1/user")
         .send({
-          username: "testUsername",
-          password: "testPassword",
-          email: "testEmail@email.com",
+          email: createOneCredentials.email,
+          username: createOneCredentials.username,
+          password: createOneCredentials.password,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
@@ -37,9 +53,9 @@ describe("user controller", () => {
       return supertest(app)
         .post("/v1/user")
         .send({
-          username: "testUsername",
-          password: "testPassword",
-          email: "testEmail@email.com",
+          email: createOneCredentials.email,
+          username: createOneCredentials.username,
+          password: createOneCredentials.password,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
@@ -58,9 +74,9 @@ describe("user controller", () => {
       return supertest(app)
         .patch(`/v1/user/${createOne.id}`)
         .send({
-          username: "testUsernameUpdated",
-          password: "testPasswordUpdated",
-          email: "testEmailUpdated@email.com",
+          email: updateOneCredentials.email,
+          username: updateOneCredentials.username,
+          password: updateOneCredentials.password,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
@@ -74,7 +90,7 @@ describe("user controller", () => {
       return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
-          username: "testUsernameUpdated",
+          username: updateOneCredentials.username,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
@@ -85,7 +101,7 @@ describe("user controller", () => {
       return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
-          email: "testEmailUpdated@email.com",
+          email: updateOneCredentials.email,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
@@ -96,7 +112,7 @@ describe("user controller", () => {
       return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
-          password: "testPasswordUpdated",
+          password: updateOneCredentials.password,
         })
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
