@@ -1,4 +1,4 @@
-const { UserRoute } = require("../build/routes/User.route");
+const { UserRoute } = require("../build/routes/User.routes");
 const Koa = require("koa");
 const supertest = require("supertest");
 const { datasource } = require("../build/datasource");

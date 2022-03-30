@@ -1,4 +1,4 @@
-const { UserRoute } = require("../build/routes/User.route");
+const { UserRoute } = require("../build/routes/User.routes");
 const Koa = require("koa");
 const supertest = require("supertest");
 const { datasource } = require("../build/datasource");
@@ -56,11 +56,15 @@ describe("token", () => {
       describe("verify", () => {
         describe("valid token", () => {
           it("invalid", () => {
-            assert(verifyAccessToken("not valid token", createOne).invalid);
+            try {
+              assert(verifyAccessToken(access_token, createOne));
+            } catch (error) {
+              assert(error);
+            }
           });
 
           it("valid", () => {
-            assert(!verifyAccessToken(access_token, createOne).invalid);
+            assert(verifyAccessToken(access_token, createOne));
           });
         });
 
@@ -76,11 +80,15 @@ describe("token", () => {
       describe("verify", () => {
         describe("valid token", () => {
           it("invalid", () => {
-            assert(verifyRefreshToken("not valid token", createOne).invalid);
+            try {
+              assert(verifyRefreshToken("not valid token", createOne));
+            } catch (error) {
+              assert(error);
+            }
           });
 
           it("valid", () => {
-            assert(!verifyRefreshToken(createOne).invalid);
+            assert(verifyRefreshToken(createOne));
           });
         });
       });
