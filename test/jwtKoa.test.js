@@ -24,7 +24,7 @@ describe("token request", () => {
   });
 
   before(() => {
-    userAccountCredentials = {
+    userCredentials = {
       username: "testJwtKoaUsername",
       password: "testJwtKoaPassword",
       email: "testJwtKoaEmail@email.com",
@@ -35,7 +35,7 @@ describe("token request", () => {
     it("creating a user", () => {
       return supertest(app)
         .post("/v1/user")
-        .send(userAccountCredentials)
+        .send(userCredentials)
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
         .expect(201)
@@ -50,8 +50,8 @@ describe("token request", () => {
       return supertest(app)
         .post("/v1/login")
         .send({
-          username: userAccountCredentials.username,
-          password: userAccountCredentials.password,
+          username: userCredentials.username,
+          password: userCredentials.password,
         })
         .expect(200)
         .then((res) => {

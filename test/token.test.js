@@ -24,13 +24,17 @@ describe("token", () => {
   });
 
   before(() => {
+    userCredentials = {
+      username: "testTokenUsername",
+      password: "testTokenPassword",
+      email: "testTokenEmail@email.com",
+    };
+  });
+
+  before(() => {
     return supertest(app)
       .post("/v1/user")
-      .send({
-        username: "testTokenUsername",
-        password: "testTokenPassword",
-        email: "testTokenEmail@email.com",
-      })
+      .send(userCredentials)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .expect(201)
