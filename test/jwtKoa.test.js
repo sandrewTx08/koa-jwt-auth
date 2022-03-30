@@ -1,4 +1,4 @@
-const { UserRoute } = require("../build/routes/User.route");
+const { UserRoute } = require("../build/routes/User.routes.js");
 const { HelloWorldRoute } = require("../build/routes/helloWorld");
 const { jwtKoa } = require("../build/middleware/jwtKoa");
 const Koa = require("koa");
