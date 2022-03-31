@@ -1,6 +1,21 @@
-const { request } = require("./index");
+const { UserRoute } = require("../build/routes/User.routes");
+const Koa = require("koa");
+const supertest = require("supertest");
+const { datasource } = require("../build/datasource");
+const bodyParser = require("koa-bodyparser");
 
 describe("user controller", () => {
+  before(() => {
+    if (!datasource.isInitialized) return datasource.initialize();
+  });
+
+  before(() => {
+    app = new Koa();
+    app.use(bodyParser());
+    app.use(UserRoute.middleware());
+    app = app.listen(process.env.PORT || 8081);
+  });
+
   before(() => {
     createOneCredentials = {
       username: "testUsername",
@@ -19,7 +34,7 @@ describe("user controller", () => {
 
   describe("User controller", () => {
     it("createOne", () => {
-      return request
+      return supertest(app)
         .post("/v1/user")
         .send({
           email: createOneCredentials.email,
@@ -35,7 +50,7 @@ describe("user controller", () => {
     });
 
     it("createOne duplicate", () => {
-      return request
+      return supertest(app)
         .post("/v1/user")
         .send({
           email: createOneCredentials.email,
@@ -48,15 +63,15 @@ describe("user controller", () => {
     });
 
     it("findOne after create", () => {
-      return request.get(`/v1/user/${createOne.id}`).expect(200);
+      return supertest(app).get(`/v1/user/${createOne.id}`).expect(200);
     });
 
     it("findAll", () => {
-      return request.get("/v1/user").expect(200);
+      return supertest(app).get("/v1/user").expect(200);
     });
 
     it("findOneAndUpdate", () => {
-      return request
+      return supertest(app)
         .patch(`/v1/user/${createOne.id}`)
         .send({
           email: updateOneCredentials.email,
@@ -72,7 +87,7 @@ describe("user controller", () => {
     });
 
     it("findOneAndUpdate equal username", () => {
-      return request
+      return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
           username: updateOneCredentials.username,
@@ -83,7 +98,7 @@ describe("user controller", () => {
     });
 
     it("findOneAndUpdate equal email", () => {
-      return request
+      return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
           email: updateOneCredentials.email,
@@ -94,7 +109,7 @@ describe("user controller", () => {
     });
 
     it("findOneAndUpdate equal password", () => {
-      return request
+      return supertest(app)
         .patch(`/v1/user/${updatedOne.id}`)
         .send({
           password: updateOneCredentials.password,
@@ -105,19 +120,23 @@ describe("user controller", () => {
     });
 
     it("findOne after update", () => {
-      return request.get(`/v1/user/${updatedOne.id}`).expect(200);
+      return supertest(app).get(`/v1/user/${updatedOne.id}`).expect(200);
     });
 
     it("findOneAndDelete", () => {
-      return request.delete(`/v1/user/${updatedOne.id}`).expect(200);
+      return supertest(app).delete(`/v1/user/${updatedOne.id}`).expect(200);
     });
 
     it("findOne after delete", () => {
-      return request.get(`/v1/user/${createOne.id}`).expect(404);
+      return supertest(app).get(`/v1/user/${createOne.id}`).expect(404);
     });
 
     it("findOne after delete", () => {
-      return request.get(`/v1/user/${updatedOne.id}`).expect(404);
+      return supertest(app).get(`/v1/user/${updatedOne.id}`).expect(404);
     });
+  });
+
+  after(() => {
+    app.close();
   });
 });

@@ -1,8 +1,28 @@
-const { request } = require("./index");
+const { UserRoute } = require("../build/routes/User.routes.js");
+const { HelloWorldRoute } = require("../build/routes/helloWorld");
+const { jwtKoa } = require("../build/middleware/jwtKoa");
+const Koa = require("koa");
+const supertest = require("supertest");
+const { datasource } = require("../build/datasource");
+const bodyParser = require("koa-bodyparser");
 const assert = require("assert");
 const { verifyAccessToken, verifyRefreshToken } = require("../build/token");
 
 describe("token request", () => {
+  before(() => {
+    if (!datasource.isInitialized) return datasource.initialize();
+  });
+
+  before(() => {
+    app = new Koa();
+    app
+      .use(bodyParser())
+      .use(UserRoute.middleware())
+      .use(jwtKoa())
+      .use(HelloWorldRoute.middleware());
+    app = app.listen(process.env.PORT || 8081);
+  });
+
   before(() => {
     userCredentials = {
       username: "testJwtKoaUsername",
@@ -13,7 +33,7 @@ describe("token request", () => {
 
   describe("first tokens", () => {
     it("creating a user", () => {
-      return request
+      return supertest(app)
         .post("/v1/user")
         .send(userCredentials)
         .set("Content-Type", "application/json")
@@ -27,7 +47,7 @@ describe("token request", () => {
     });
 
     it("login and return access token", () => {
-      return request
+      return supertest(app)
         .post("/v1/login")
         .send({
           username: userCredentials.username,
@@ -41,6 +61,10 @@ describe("token request", () => {
   });
 
   after(() => {
-    return request.delete(`/v1/user/${createdUser.id}`).expect(200);
+    return supertest(app).delete(`/v1/user/${createdUser.id}`).expect(200);
+  });
+
+  after(() => {
+    app.close();
   });
 });
