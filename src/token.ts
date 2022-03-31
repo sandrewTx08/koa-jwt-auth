@@ -1,62 +1,42 @@
 import { config } from "./config";
 import { User } from "./entity/User";
-import {
-  sign,
-  verify,
-  TokenExpiredError,
-  JsonWebTokenError,
-} from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
+
+export let ACCESS_EXP = config.JWT_ACCESS_TOKEN_EXP;
+export let ACCESS = config.JWT_ACCESS_TOKEN;
+export let REFRESH_EXP = config.JWT_REFRESH_TOKEN_EXP;
+export let REFRESH = config.JWT_REFRESH_TOKEN;
 
 export function signAccessToken(refresh_id: string, user: User) {
-  return sign({ refresh_id, user_id: user.id }, config.JWT_ACCESS_TOKEN, {
-    expiresIn: String(config.JWT_ACCESS_TOKEN_EXP),
+  return sign({ refresh_id, user_id: user.id }, ACCESS, {
+    expiresIn: String(ACCESS_EXP),
   });
 }
 
 export function signRefreshToken(uuid: string, user: User) {
-  return sign(
-    { refresh_id: uuid, user_id: user.id },
-    config.JWT_REFRESH_TOKEN,
-    {
-      expiresIn: String(config.JWT_REFRESH_TOKEN_EXP),
-    }
-  );
+  return sign({ refresh_id: uuid, user_id: user.id }, REFRESH, {
+    expiresIn: String(REFRESH_EXP),
+  });
 }
 
 export function verifyAccessToken(token: string) {
-  try {
-    let payload = Object(
-      verify(token, config.JWT_ACCESS_TOKEN, { ignoreExpiration: true })
-    );
-    try {
-      payload = Object(verify(token, config.JWT_ACCESS_TOKEN));
-      return { expired: false, ...payload };
-    } catch (err) {
-      if (err instanceof TokenExpiredError)
-        return { expired: true, ...payload };
-    }
-  } catch (err) {
-    if (err instanceof JsonWebTokenError) return { invalid: true };
-    else throw err;
-  }
+  const payload = Object(
+    verify(token, ACCESS, {
+      ignoreExpiration: true,
+    })
+  );
+
+  if (Date.now() >= payload.exp * 1000) return { expired: true, ...payload };
+  else return { expired: false, ...payload };
 }
 
 export function verifyRefreshToken(user: User) {
-  try {
-    let payload = Object(
-      verify(user.refresh_token, config.JWT_REFRESH_TOKEN, {
-        ignoreExpiration: true,
-      })
-    );
-    try {
-      payload = Object(verify(user.refresh_token, config.JWT_REFRESH_TOKEN));
-      return { expired: false, ...payload };
-    } catch (err) {
-      if (err instanceof TokenExpiredError)
-        return { expired: true, ...payload };
-    }
-  } catch (err) {
-    if (err instanceof JsonWebTokenError) return { invalid: true };
-    else throw err;
-  }
+  const payload = Object(
+    verify(user.refresh_token, REFRESH, {
+      ignoreExpiration: true,
+    })
+  );
+
+  if (Date.now() >= payload.exp * 1000) return { expired: true, ...payload };
+  else return { expired: false, ...payload };
 }
