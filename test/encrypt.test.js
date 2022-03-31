@@ -2,9 +2,8 @@ const bcrypt = require("bcrypt");
 const assert = require("assert");
 
 describe("test encryption", () => {
-  before(() => {
-    notEncrypted = "sensive information";
-  });
+  let notEncrypted = "sensive information";
+  let isEncrypted;
 
   it("hash data", () => {
     return bcrypt.hash(notEncrypted, 10).then((encrypted) => {

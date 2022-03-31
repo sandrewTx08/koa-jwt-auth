@@ -1,21 +1,19 @@
 const { request } = require("./index");
 
 describe("user controller", () => {
-  before(() => {
-    createOneCredentials = {
-      username: "testUsername",
-      password: "testPassword",
-      email: "testEmail@email.com",
-    };
-  });
+  let createOneCredentials = {
+    username: "testUsername",
+    password: "testPassword",
+    email: "testEmail@email.com",
+  };
+  let createOne;
 
-  before(() => {
-    updateOneCredentials = {
-      username: "testUsernameUpdated",
-      password: "testPasswordUpdated",
-      email: "testEmailUpdated@email.com",
-    };
-  });
+  let updateOneCredentials = {
+    username: "testUsernameUpdated",
+    password: "testPasswordUpdated",
+    email: "testEmailUpdated@email.com",
+  };
+  let updatedOne;
 
   describe("User controller", () => {
     it("createOne", () => {
