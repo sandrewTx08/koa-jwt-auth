@@ -9,10 +9,9 @@ describe("token request", () => {
     email: "testJwtKoaEmail@email.com",
   };
 
+  let createdUser;
   describe("token authorization", () => {
     describe("token from user creation", () => {
-      let createdUser;
-
       it("create user", () => {
         return request
           .post("/v1/user")
