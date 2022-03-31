@@ -9,7 +9,7 @@ export const datasource = new DataSource({
   username: config.TYPEORM_USERNAME,
   password: config.TYPEORM_PASSWORD,
   database: config.TYPEORM_DATABASE,
-  synchronize: Boolean(config.TYPEORM_SYNCHRONIZE),
-  logging: Boolean(config.TYPEORM_LOGGING),
-  entities: [User],
+  synchronize: Boolean(config.TYPEORM_SYNCHRONIZE || true),
+  logging: Boolean(config.TYPEORM_LOGGING || false),
+  entities: [User], 
 });

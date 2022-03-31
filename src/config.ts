@@ -1,2 +1,2 @@
 import { config as Config } from "dotenv";
-export const config = { ...Config().parsed };
+export const config = { ...Config().parsed, ...process.env };
