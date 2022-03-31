@@ -3,14 +3,12 @@ const assert = require("assert");
 const { verifyAccessToken, verifyRefreshToken } = require("../build/token");
 
 describe("token request", () => {
-  before(() => {
-    userCredentials = {
-      username: "testJwtKoaUsername",
-      password: "testJwtKoaPassword",
-      email: "testJwtKoaEmail@email.com",
-    };
-  });
-
+  let userCredentials = {
+    username: "testJwtKoaUsername",
+    password: "testJwtKoaPassword",
+    email: "testJwtKoaEmail@email.com",
+  };
+  let createdUser;
   describe("first tokens", () => {
     it("creating a user", () => {
       return request
