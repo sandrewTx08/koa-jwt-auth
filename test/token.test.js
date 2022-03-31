@@ -1,4 +1,8 @@
-const { request } = require("./index");
+const { UserRoute } = require("../build/routes/User.routes");
+const Koa = require("koa");
+const supertest = require("supertest");
+const { datasource } = require("../build/datasource");
+const bodyParser = require("koa-bodyparser");
 const {
   signAccessToken,
   verifyAccessToken,
@@ -9,14 +13,26 @@ const { v4 } = require("uuid");
 const assert = require("assert");
 
 describe("token", () => {
-  let createOne;
-  let userCredentials = {
-    username: "testTokenUsername",
-    password: "testTokenPassword",
-    email: "testTokenEmail@email.com",
-  };
   before(() => {
-    return request
+    if (!datasource.isInitialized) return datasource.initialize();
+  });
+
+  before(() => {
+    app = new Koa();
+    app.use(bodyParser()).use(UserRoute.middleware());
+    app = app.listen(process.env.PORT || 8081);
+  });
+
+  before(() => {
+    userCredentials = {
+      username: "testTokenUsername",
+      password: "testTokenPassword",
+      email: "testTokenEmail@email.com",
+    };
+  });
+
+  before(() => {
+    return supertest(app)
       .post("/v1/user")
       .send(userCredentials)
       .set("Content-Type", "application/json")
@@ -27,12 +43,12 @@ describe("token", () => {
       });
   });
 
+  before(() => {
+    refresh_id = v4();
+  });
+
   describe("token format", () => {
-    let refresh_id = v4();
-
     describe("access token", () => {
-      let access_token;
-
       it("sign", () => {
         access_token = signAccessToken(refresh_id, createOne);
       });
@@ -58,7 +74,7 @@ describe("token", () => {
 
     describe("refresh token", () => {
       it("sign", () => {
-        signRefreshToken(refresh_id, createOne);
+        refresh_token = signRefreshToken(refresh_id, createOne);
       });
 
       describe("verify", () => {
@@ -80,6 +96,10 @@ describe("token", () => {
   });
 
   after(() => {
-    return request.delete(`/v1/user/${createOne.id}`).expect(200);
+    return supertest(app).delete(`/v1/user/${createOne.id}`).expect(200);
+  });
+
+  after(() => {
+    app.close();
   });
 });
