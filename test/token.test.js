@@ -17,20 +17,19 @@ describe("token", () => {
     if (!datasource.isInitialized) return datasource.initialize();
   });
 
+  let app;
   before(() => {
     app = new Koa();
     app.use(bodyParser()).use(UserRoute.middleware());
     app = app.listen(process.env.PORT || 8081);
   });
 
-  before(() => {
-    userCredentials = {
-      username: "testTokenUsername",
-      password: "testTokenPassword",
-      email: "testTokenEmail@email.com",
-    };
-  });
-
+  let createOne;
+  let userCredentials = {
+    username: "testTokenUsername",
+    password: "testTokenPassword",
+    email: "testTokenEmail@email.com",
+  };
   before(() => {
     return supertest(app)
       .post("/v1/user")
@@ -43,12 +42,12 @@ describe("token", () => {
       });
   });
 
-  before(() => {
-    refresh_id = v4();
-  });
-
   describe("token format", () => {
+    let refresh_id = v4();
+
     describe("access token", () => {
+      let access_token;
+
       it("sign", () => {
         access_token = signAccessToken(refresh_id, createOne);
       });
@@ -74,7 +73,7 @@ describe("token", () => {
 
     describe("refresh token", () => {
       it("sign", () => {
-        refresh_token = signRefreshToken(refresh_id, createOne);
+        signRefreshToken(refresh_id, createOne);
       });
 
       describe("verify", () => {
