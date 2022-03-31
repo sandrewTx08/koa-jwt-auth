@@ -1,8 +1,4 @@
-const { UserRoute } = require("../build/routes/User.routes");
-const Koa = require("koa");
-const supertest = require("supertest");
-const { datasource } = require("../build/datasource");
-const bodyParser = require("koa-bodyparser");
+const { request } = require("./index");
 const {
   signAccessToken,
   verifyAccessToken,
@@ -13,17 +9,6 @@ const { v4 } = require("uuid");
 const assert = require("assert");
 
 describe("token", () => {
-  before(() => {
-    if (!datasource.isInitialized) return datasource.initialize();
-  });
-
-  let app;
-  before(() => {
-    app = new Koa();
-    app.use(bodyParser()).use(UserRoute.middleware());
-    app = app.listen(process.env.PORT || 8081);
-  });
-
   let createOne;
   let userCredentials = {
     username: "testTokenUsername",
@@ -31,7 +16,7 @@ describe("token", () => {
     email: "testTokenEmail@email.com",
   };
   before(() => {
-    return supertest(app)
+    return request
       .post("/v1/user")
       .send(userCredentials)
       .set("Content-Type", "application/json")
@@ -95,10 +80,6 @@ describe("token", () => {
   });
 
   after(() => {
-    return supertest(app).delete(`/v1/user/${createOne.id}`).expect(200);
-  });
-
-  after(() => {
-    app.close();
+    return request.delete(`/v1/user/${createOne.id}`).expect(200);
   });
 });

@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "npm run build & mocha",
+    "test": "npm run build & mocha --exit",
     "dev": "nodemon src/app.ts",
     "start": "ts-node src/app.ts",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
