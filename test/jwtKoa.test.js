@@ -8,33 +8,62 @@ describe("token request", () => {
     password: "testJwtKoaPassword",
     email: "testJwtKoaEmail@email.com",
   };
-  let createdUser;
-  describe("first tokens", () => {
-    it("creating a user", () => {
-      return request
-        .post("/v1/user")
-        .send(userCredentials)
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(201)
-        .then((res) => {
-          createdUser = res.body;
-          assert(!verifyAccessToken(createdUser.access_token).invalid);
-          assert(!verifyRefreshToken(createdUser).invalid);
-        });
+
+  describe("token authorization", () => {
+    describe("token from user creation", () => {
+      let createdUser;
+
+      it("create user", () => {
+        return request
+          .post("/v1/user")
+          .send(userCredentials)
+          .set("Content-Type", "application/json")
+          .set("Accept", "application/json")
+          .expect(201)
+          .then((res) => {
+            createdUser = res.body;
+            assert(verifyAccessToken(createdUser.access_token));
+            assert(verifyRefreshToken(createdUser));
+          });
+      });
+
+      it("send access token", () => {
+        return request
+          .get("/")
+          .set("Authorization", `Bearer ${createdUser.access_token}`)
+          .expect(200)
+          .then((res) => {
+            assert(res.text === "<h1>Hello World!</h1>");
+          });
+      });
     });
 
-    it("login and return access token", () => {
-      return request
-        .post("/v1/login")
-        .send({
-          username: userCredentials.username,
-          password: userCredentials.password,
-        })
-        .expect(200)
-        .then((res) => {
-          assert(!verifyAccessToken(res.text).invalid);
-        });
+    describe("token from login", () => {
+      let loginToken;
+
+      it("login and return access token", () => {
+        return request
+          .post("/v1/login")
+          .send({
+            username: userCredentials.username,
+            password: userCredentials.password,
+          })
+          .expect(200)
+          .then((res) => {
+            loginToken = res.text;
+            assert(verifyAccessToken(res.text));
+          });
+      });
+
+      it("send access token", () => {
+        return request
+          .get("/")
+          .set("Authorization", `Bearer ${loginToken}`)
+          .expect(200)
+          .then((res) => {
+            assert(res.text === "<h1>Hello World!</h1>");
+          });
+      });
     });
   });
 
