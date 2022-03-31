@@ -50,6 +50,18 @@ describe("user controller", () => {
       return request.get(`/v1/user/${createOne.id}`).expect(200);
     });
 
+    it("authenticatePassword incorrect password after create", () => {
+      return request
+        .post(`/v1/login`)
+        .send({
+          username: createOneCredentials.username,
+          password: "incorrect password",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accet", "application/json")
+        .expect(400);
+    });
+
     it("authenticatePassword with email after create", () => {
       return request
         .post(`/v1/login`)
@@ -98,6 +110,18 @@ describe("user controller", () => {
         .then((res) => {
           updatedOne = res.body;
         });
+    });
+
+    it("authenticatePassword incorrect password after update", () => {
+      return request
+        .post(`/v1/login`)
+        .send({
+          email: updateOneCredentials.email,
+          password: "incorrect password",
+        })
+        .set("Content-Type", "application/json")
+        .set("Accet", "application/json")
+        .expect(400);
     });
 
     it("authenticatePassword with email after update", () => {
