@@ -4,7 +4,7 @@ const {
   verifyAccessToken,
   signRefreshToken,
   verifyRefreshToken,
-} = require("../build/token");
+} = require("../../build/token");
 const { v4 } = require("uuid");
 const assert = require("assert");
 
