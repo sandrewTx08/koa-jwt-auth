@@ -1,6 +1,6 @@
 const { request } = require("./index");
 const assert = require("assert");
-const { verifyAccessToken, verifyRefreshToken } = require("../build/token");
+const { verifyAccessToken, verifyRefreshToken } = require("../../build/token");
 
 describe("token request", () => {
   let userCredentials = {
