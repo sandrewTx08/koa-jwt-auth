@@ -21,7 +21,7 @@ export function jwtKoa() {
 
     const user = await datasource
       .getRepository(User)
-      .findOneBy({ id: access_token.id });
+      .findOneBy({ id: access_token.user_id });
     ctx.assert(user, 410, "User may not exist anymore.");
     ctx.assert(user.enable, 403, "User was disabled by system.");
 
