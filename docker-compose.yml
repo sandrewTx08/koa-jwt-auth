@@ -16,6 +16,5 @@ services:
     env_file: ./api/.env
     environment:
       TYPEORM_URL: postgres://postgres:postgres@db:5432/postgres
-      HASH_SALT: 10
     depends_on:
       - db
