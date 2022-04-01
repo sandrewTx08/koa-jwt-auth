@@ -24,4 +24,4 @@ services:
       JWT_ACCESS_TOKEN: secret2
       HASH_SALT: 10
     depends_on:
-      - postgres
+      - db
