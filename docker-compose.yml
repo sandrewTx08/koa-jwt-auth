@@ -4,10 +4,8 @@ services:
     image: postgres
     ports:
       - 5432:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+    env_file:
+      - ./db/config.env
     volumes:
       - ./db/volumes:/var/lib/postgresql/data
   api:
@@ -15,13 +13,11 @@ services:
     ports:
       - 8080:8080
     restart: always
-    env_file: api/.env
+    env_file: ./api/.env
     environment:
       TYPEORM_URL: postgres://postgres:postgres@db:5432/postgres
       JWT_REFRESH_TOKEN_EXP: 1 week
-      JWT_REFRESH_TOKEN: secret1
       JWT_ACCESS_TOKEN_EXP: 8 hour
-      JWT_ACCESS_TOKEN: secret2
       HASH_SALT: 10
     depends_on:
       - db
