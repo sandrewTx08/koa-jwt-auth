@@ -15,6 +15,7 @@ services:
     restart: always
     env_file: ./api/.env
     environment:
+      # db/config.env - Configuration
       TYPEORM_URL: postgres://postgres:postgres@db:5432/postgres
     depends_on:
       - db
