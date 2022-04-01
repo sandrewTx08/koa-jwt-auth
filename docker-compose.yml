@@ -16,8 +16,6 @@ services:
     env_file: ./api/.env
     environment:
       TYPEORM_URL: postgres://postgres:postgres@db:5432/postgres
-      JWT_REFRESH_TOKEN_EXP: 1 week
-      JWT_ACCESS_TOKEN_EXP: 8 hour
       HASH_SALT: 10
     depends_on:
       - db
