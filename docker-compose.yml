@@ -3,18 +3,19 @@ services:
   db:
     image: postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - ./db/volumes:/var/lib/postgresql/data
   api:
-    build: .
+    build: ./api
     ports:
       - 8080:8080
     restart: always
+    env_file: api/.env
     environment:
       TYPEORM_USERNAME: postgres
       TYPEORM_PASSWORD: postgres
