@@ -11,6 +11,34 @@ import encrypt from "../encrypt";
 import { datasource } from "../datasource";
 
 export class UserController {
+  /**
+   * @openapi
+   *  /v1/login:
+   *    post:
+   *      summary: Authenticate user
+   *      tags:
+   *        - User
+   *      requestBody:
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                username:
+   *                  type: string
+   *                  example: myUsername
+   *                password:
+   *                  type: string
+   *                  example: myPassword
+   *                email:
+   *                  type: string
+   *                  example: myEmail@email.com
+   *      responses:
+   *        200:
+   *          description: Success
+   *        400:
+   *          description: Invalid password
+   */
   static async authenticatePassword(ctx: Context) {
     ctx.assert(
       ctx.request.body.username || ctx.request.body.email,
@@ -41,12 +69,44 @@ export class UserController {
     ctx.body = signAccessToken(refresh_id, user);
   }
 
+  /**
+   * @openapi
+   *  /v1/user:
+   *    get:
+   *      summary: Find all users
+   *      tags:
+   *        - User
+   *      responses:
+   *        200:
+   *          description: Success
+   *        404:
+   *          description: No user found
+   */
   static async findAll(ctx: Context) {
     let user: User[] = await datasource.getRepository(User).find();
     ctx.assert(user.length > 0, 404, "No user found.");
     ctx.body = user;
   }
 
+  /**
+   * @openapi
+   *  /v1/user/{id}:
+   *    get:
+   *      summary: Find one user
+   *      tags:
+   *        - User
+   *      parameters:
+   *      - name: id
+   *        in: path
+   *        description: User ID
+   *        schema:
+   *          types: string
+   *      responses:
+   *        200:
+   *          description: Success
+   *        404:
+   *          description: User not found
+   */
   static async findOne(ctx: Context) {
     let user = await datasource
       .getRepository(User)
@@ -55,6 +115,32 @@ export class UserController {
     ctx.body = user;
   }
 
+  /**
+   * @openapi
+   *  /v1/user:
+   *    post:
+   *      summary: Create user
+   *      tags:
+   *        - User
+   *      requestBody:
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                username:
+   *                  type: string
+   *                  example: createUser
+   *                password:
+   *                  type: string
+   *                  example: createPassword
+   *                email:
+   *                  type: string
+   *                  example: createEmail@email.com
+   *      responses:
+   *        201:
+   *          description: Success
+   */
   static async createOne(ctx: Context) {
     ctx.assert(
       !(await datasource.getRepository(User).findOneBy({
@@ -83,6 +169,40 @@ export class UserController {
     };
   }
 
+  /**
+   * @openapi
+   *  /v1/user/{id}:
+   *    patch:
+   *      summary: Update user
+   *      tags:
+   *        - User
+   *      parameters:
+   *      - name: id
+   *        in: path
+   *        description: User ID
+   *        schema:
+   *          types: string
+   *      requestBody:
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                username:
+   *                  type: string
+   *                  example: updatedUser
+   *                password:
+   *                  type: string
+   *                  example: updatedPassword
+   *                email:
+   *                  type: string
+   *                  example: updatedEmail@email.com
+   *      responses:
+   *        200:
+   *          description: Success
+   *        404:
+   *          description: User not found
+   */
   static async findOneAndUpdate(ctx: Context) {
     let user = await datasource
       .getRepository(User)
@@ -128,6 +248,25 @@ export class UserController {
     };
   }
 
+  /**
+   * @openapi
+   *  /v1/user/{id}:
+   *    delete:
+   *      summary: Delete user
+   *      tags:
+   *        - User
+   *      parameters:
+   *      - name: id
+   *        in: path
+   *        description: User ID
+   *        schema:
+   *          types: string
+   *      responses:
+   *        200:
+   *          description: Success
+   *        404:
+   *          description: User not found
+   */
   static async findOneAndDelete(ctx: Context) {
     const user = await datasource
       .getRepository(User)

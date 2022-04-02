@@ -57,12 +57,13 @@ curl --location --request GET 'localhost:8080/' \
 
 ## Routes
 
-| Method   | Endpoint                           | Description        |
-| -------- | ---------------------------------- | ------------------ |
-| `GET`    | [/](#authorization)                | Main route.        |
-| `POST`   | [/v1/login](/USER.md#login)        | Authenticate user. |
-| `POST`   | [/v1/register](/USER.md#register)  | Create a new user. |
-| `GET`    | [/v1/user](/USER.md#find-all)      | Find all users.    |
-| `GET`    | [/v1/user/`id`](/USER.md#find-one) | Find user by ID.   |
-| `PATCH`  | [/v1/user/`id`](/USER.md#update)   | Update user by ID. |
-| `DELETE` | [/v1/user/`id`](/USER.md#delete)   | Delete user by ID. |
+| Method   | Endpoint                           | Description            |
+| -------- | ---------------------------------- | ---------------------- |
+| `GET`    | [/](#authorization)                | Main route.            |
+| `GET`    | /v1                                | Swagger documentation. |
+| `POST`   | [/v1/login](/USER.md#login)        | Authenticate user.     |
+| `POST`   | [/v1/register](/USER.md#register)  | Create a new user.     |
+| `GET`    | [/v1/user](/USER.md#find-all)      | Find all users.        |
+| `GET`    | [/v1/user/`id`](/USER.md#find-one) | Find user by ID.       |
+| `PATCH`  | [/v1/user/`id`](/USER.md#update)   | Update user by ID.     |
+| `DELETE` | [/v1/user/`id`](/USER.md#delete)   | Delete user by ID.     |
