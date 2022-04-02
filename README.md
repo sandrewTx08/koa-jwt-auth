@@ -4,7 +4,7 @@
 
 ### Requirements
 
-- [x] Recent Docker version.
+- [x] Recent [Docker](https://www.docker.com/) version.
 
 ### Installing
 
@@ -57,12 +57,12 @@ curl --location --request GET 'localhost:8080/' \
 
 ## Routes
 
-| Method   | Endpoint      | Description        |
-| -------- | ------------- | ------------------ |
-| `GET`    | /             | Main route.        |
-| `POST`   | /v1/login     | Authenticate user. |
-| `POST`   | /v1/register  | Create a new user. |
-| `GET`    | /v1/user      | Find all users.    |
-| `GET`    | /v1/user/`id` | Find user by ID.   |
-| `PATCH`  | /v1/user/`id` | Update user by ID. |
-| `DELETE` | /v1/user/`id` | Delete user by ID. |
+| Method   | Endpoint                           | Description        |
+| -------- | ---------------------------------- | ------------------ |
+| `GET`    | [/](#authorization)                | Main route.        |
+| `POST`   | [/v1/login](/USER.md#login)        | Authenticate user. |
+| `POST`   | [/v1/register](/USER.md#register)  | Create a new user. |
+| `GET`    | [/v1/user](/USER.md#find-all)      | Find all users.    |
+| `GET`    | [/v1/user/`id`](/USER.md#find-one) | Find user by ID.   |
+| `PATCH`  | [/v1/user/`id`](/USER.md#update)   | Update user by ID. |
+| `DELETE` | [/v1/user/`id`](/USER.md#delete)   | Delete user by ID. |

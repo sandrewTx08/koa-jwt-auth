@@ -23,6 +23,18 @@ curl --location --request POST 'localhost:8080/v1/login' \
 }'
 ```
 
+# Find all
+
+```cmd
+curl --location --request GET 'localhost:8080/v1/user'
+```
+
+# Find one
+
+```cmd
+curl --location --request GET 'localhost:8080/v1/user/55464a1c-b29e-11ec-b909-0242ac120002'
+```
+
 ## Update
 
 ```cmd
