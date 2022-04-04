@@ -2,19 +2,16 @@ version: "3.7"
 services:
   db:
     image: postgres
-    env_file:
-      - ./db/config.env
+    env_file: ./db/config.env
     volumes:
       - ./db/volumes:/var/lib/postgresql/data
   api:
     build: ./api
     restart: always
     env_file: ./api/.env
-    ports:
-      - 80
     environment:
-      # db/config.env - Configuration
-      TYPEORM_URL: postgres://postgres:postgres@db/postgres
+      PORT: "80"
+      TYPEORM_URL: postgres://postgres:postgres@db/postgres # db/config.env
     depends_on:
       - db
   web:
@@ -22,4 +19,4 @@ services:
     # volumes:
     #   - ./proxy/templates:/etc/nginx/templates
     ports:
-      - 80:80
+      - "80:80"
