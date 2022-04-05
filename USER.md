@@ -3,7 +3,7 @@
 ## Register
 
 ```cmd
-curl --location --request POST 'localhost:8080/v1/register' \
+curl --location --request POST 'localhost/v1/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "user_001",
@@ -15,7 +15,7 @@ curl --location --request POST 'localhost:8080/v1/register' \
 ## Login
 
 ```cmd
-curl --location --request POST 'localhost:8080/v1/login' \
+curl --location --request POST 'localhost/v1/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "user_001",
@@ -26,19 +26,19 @@ curl --location --request POST 'localhost:8080/v1/login' \
 ## Find all
 
 ```cmd
-curl --location --request GET 'localhost:8080/v1/user'
+curl --location --request GET 'localhost/v1/user'
 ```
 
 ## Find one
 
 ```cmd
-curl --location --request GET 'localhost:8080/v1/user/55464a1c-b29e-11ec-b909-0242ac120002'
+curl --location --request GET 'localhost/v1/user/55464a1c-b29e-11ec-b909-0242ac120002'
 ```
 
 ## Update
 
 ```cmd
-curl --location --request PATCH 'localhost:8080/v1/user/55464a1c-b29e-11ec-b909-0242ac120002' \
+curl --location --request PATCH 'localhost/v1/user/55464a1c-b29e-11ec-b909-0242ac120002' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "user_002",
@@ -50,5 +50,5 @@ curl --location --request PATCH 'localhost:8080/v1/user/55464a1c-b29e-11ec-b909-
 ## Delete
 
 ```cmd
-curl --location --request DELETE 'localhost:8080/v1/user/55464a1c-b29e-11ec-b909-0242ac120002'
+curl --location --request DELETE 'localhost/v1/user/55464a1c-b29e-11ec-b909-0242ac120002'
 ```

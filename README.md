@@ -17,7 +17,7 @@ After successfully [register](/USER.md#register) and [login](/USER.md#login) the
    - Example:
 
    ```cmd
-   curl --location --request GET 'localhost:8080/' \
+   curl --location --request GET 'localhost' \
    --header 'Authorization: Bearer xxx.xxx.xxx'
    ```
 
