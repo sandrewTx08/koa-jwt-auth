@@ -10,7 +10,7 @@ import { HelloWorldRoute } from "./routes/HelloWorld";
 datasource.initialize();
 const app = new Koa();
 
-readFile("./openapi.yml", (err, data) => {
+readFile(`${__dirname}/../openapi.yml`, (err, data) => {
   const spec = Object(yaml.load(data.toString()));
   app
     .use(
