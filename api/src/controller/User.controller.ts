@@ -41,20 +41,29 @@ export class UserController {
    */
   static async authenticatePassword(ctx: Context) {
     ctx.assert(
-      ctx.request.body.username || ctx.request.body.email,
+      (ctx.request.body.email && ctx.request.body.password) ||
+        (ctx.request.body.username && ctx.request.body.password),
       400,
-      "Username or email is empty."
+      "Credentials are required."
     );
 
-    const user = await datasource.getRepository(User).findOneBy({
-      username: ctx.request.body.username,
-      email: ctx.request.body.email,
+    const user = await datasource.getRepository(User).findOne({
+      where: [
+        {
+          email: ctx.request.body.email,
+        },
+        {
+          username: ctx.request.body.username,
+        },
+      ],
     });
+
+    ctx.assert(user, 404, "User not found.");
 
     ctx.assert(
       await compare(ctx.request.body.password, user.password),
       400,
-      "Invalid password"
+      "Invalid password."
     );
 
     const refresh_token = verifyRefreshToken(user);
@@ -143,9 +152,23 @@ export class UserController {
    */
   static async createOne(ctx: Context) {
     ctx.assert(
-      !(await datasource.getRepository(User).findOneBy({
-        username: ctx.request.body.username,
-        email: ctx.request.body.email,
+      ctx.request.body.username &&
+        ctx.request.body.email &&
+        ctx.request.body.password,
+      400,
+      "Credentials are required."
+    );
+
+    ctx.assert(
+      !(await datasource.getRepository(User).findOne({
+        where: [
+          {
+            email: ctx.request.body.email,
+          },
+          {
+            username: ctx.request.body.username,
+          },
+        ],
       })),
       409,
       "User already exists."
