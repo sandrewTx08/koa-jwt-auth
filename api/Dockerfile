@@ -4,8 +4,10 @@ WORKDIR /app
 
 ADD package.json ./
 
-RUN npm install 
+RUN npm install --global yarn --force
+
+RUN yarn install
 
 ADD . .
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
